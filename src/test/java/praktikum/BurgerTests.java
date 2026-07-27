@@ -22,10 +22,10 @@ public class BurgerTests {
     private Ingredient mockIngredient;
 
     @Mock
-    private Ingredient mockIngredient2;
+    private Ingredient mockSauce;
 
     @Mock
-    private Ingredient mockIngredient3;
+    private Ingredient mockFilling;
 
     @Before
     public void setUp() {
@@ -66,9 +66,16 @@ public class BurgerTests {
     @Test
     public void testMoveIngredient() {
         burger.addIngredient(mockIngredient);
-        burger.addIngredient(mockIngredient2);
+        burger.addIngredient(mockSauce);
         burger.moveIngredient(0, 1);
-        assertEquals("Ингредиенты не перемещены правильно", mockIngredient2, burger.ingredients.get(0));
+        assertEquals("Ингредиенты не перемещены правильно", mockSauce, burger.ingredients.get(0));
+    }
+
+    @Test
+    public void testMoveIngredientSecondPosition() {
+        burger.addIngredient(mockIngredient);
+        burger.addIngredient(mockSauce);
+        burger.moveIngredient(0, 1);
         assertEquals("Ингредиенты не перемещены правильно", mockIngredient, burger.ingredients.get(1));
     }
 
@@ -92,13 +99,13 @@ public class BurgerTests {
     public void testGetPriceWithMultipleIngredients() {
         Mockito.when(mockBun.getPrice()).thenReturn(100.0f);
         Mockito.when(mockIngredient.getPrice()).thenReturn(50.0f);
-        Mockito.when(mockIngredient2.getPrice()).thenReturn(75.0f);
-        Mockito.when(mockIngredient3.getPrice()).thenReturn(25.0f);
+        Mockito.when(mockSauce.getPrice()).thenReturn(75.0f);
+        Mockito.when(mockFilling.getPrice()).thenReturn(25.0f);
 
         burger.setBuns(mockBun);
         burger.addIngredient(mockIngredient);
-        burger.addIngredient(mockIngredient2);
-        burger.addIngredient(mockIngredient3);
+        burger.addIngredient(mockSauce);
+        burger.addIngredient(mockFilling);
 
         // Цена = 100*2 + 50 + 75 + 25 = 350
         assertEquals("Цена бургера рассчитана неправильно", 350.0f, burger.getPrice(), 0.0f);
@@ -125,10 +132,10 @@ public class BurgerTests {
     }
 
     /**
-     * Проверка метода getReceipt с несколькими ингредиентами разных типов.
+     * Проверка метода getReceipt с несколькими ингредиентами разных типов - чек.
      */
     @Test
-    public void testGetReceiptWithMultipleIngredients() {
+    public void testGetReceiptWithMultipleIngredientsReceipt() {
         Mockito.when(mockBun.getName()).thenReturn("white bun");
         Mockito.when(mockBun.getPrice()).thenReturn(200.0f);
         
@@ -136,23 +143,44 @@ public class BurgerTests {
         Mockito.when(mockIngredient.getType()).thenReturn(IngredientType.SAUCE);
         Mockito.when(mockIngredient.getPrice()).thenReturn(100.0f);
         
-        Mockito.when(mockIngredient2.getName()).thenReturn("cutlet");
-        Mockito.when(mockIngredient2.getType()).thenReturn(IngredientType.FILLING);
-        Mockito.when(mockIngredient2.getPrice()).thenReturn(150.0f);
+        Mockito.when(mockSauce.getName()).thenReturn("cutlet");
+        Mockito.when(mockSauce.getType()).thenReturn(IngredientType.FILLING);
+        Mockito.when(mockSauce.getPrice()).thenReturn(150.0f);
         
-        Mockito.when(mockIngredient3.getName()).thenReturn("sour cream");
-        Mockito.when(mockIngredient3.getType()).thenReturn(IngredientType.SAUCE);
-        Mockito.when(mockIngredient3.getPrice()).thenReturn(200.0f);
+        Mockito.when(mockFilling.getName()).thenReturn("sour cream");
+        Mockito.when(mockFilling.getType()).thenReturn(IngredientType.SAUCE);
+        Mockito.when(mockFilling.getPrice()).thenReturn(200.0f);
 
         burger.setBuns(mockBun);
         burger.addIngredient(mockIngredient);
-        burger.addIngredient(mockIngredient2);
-        burger.addIngredient(mockIngredient3);
+        burger.addIngredient(mockSauce);
+        burger.addIngredient(mockFilling);
 
-        // Цена = 200*2 + 100 + 150 + 200 = 850
         String expectedReceipt = String.format("(==== %s ====)%n= sauce %s =%n= filling %s =%n= sauce %s =%n(==== %s ====)%n%nPrice: %f%n",
                 "white bun", "hot sauce", "cutlet", "sour cream", "white bun", 850.0f);
 
         assertEquals("Квитанция о бургере не соответствует ожидаемой", expectedReceipt, burger.getReceipt());
+    }
+
+    /**
+     * Проверка метода getPrice с несколькими ингредиентами разных типов.
+     */
+    @Test
+    public void testGetPriceWithMultipleIngredientsDifferentTypes() {
+        Mockito.when(mockBun.getPrice()).thenReturn(200.0f);
+        
+        Mockito.when(mockIngredient.getPrice()).thenReturn(100.0f);
+        
+        Mockito.when(mockSauce.getPrice()).thenReturn(150.0f);
+        
+        Mockito.when(mockFilling.getPrice()).thenReturn(200.0f);
+
+        burger.setBuns(mockBun);
+        burger.addIngredient(mockIngredient);
+        burger.addIngredient(mockSauce);
+        burger.addIngredient(mockFilling);
+
+        // Цена = 200*2 + 100 + 150 + 200 = 850
+        assertEquals("Цена бургера рассчитана неправильно", 850.0f, burger.getPrice(), 0.0f);
     }
 }
